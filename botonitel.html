@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>El Mejor Botón del Mundo</title>
+<style>
+  :root{
+    --bg:#06070b; --fg:#e8eefc; --sub:#94a3b8;
+    --primary:#4f8cff; --primary-2:#7aa8ff; --ok:#22c55e; --err:#ef4444;
+    --card:rgba(255,255,255,.06); --border:rgba(255,255,255,.14);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--fg); background:radial-gradient(1200px 900px at 10% 10%, #0a1020 0, #070a14 35%, var(--bg) 70%) fixed;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, "Helvetica Neue", "Noto Sans", sans-serif;
+    display:grid; place-items:center; overflow:hidden;
+  }
+
+  /* Fondo aurora animado */
+  .aurora{position:fixed; inset:-25vmax; pointer-events:none; filter:blur(70px) saturate(140%);
+    background:
+      radial-gradient(60vmax 40vmax at 15% 30%, rgba(79,140,255,.22), transparent 60%),
+      radial-gradient(70vmax 55vmax at 85% 70%, rgba(34,197,94,.16), transparent 60%),
+      radial-gradient(40vmax 30vmax at 60% 90%, rgba(236,72,153,.14), transparent 60%);
+    animation: float 26s ease-in-out infinite alternate;
+  }
+  @keyframes float{to{transform:translate3d(1%, -2%, 0)}}
+
+  /* Tarjeta */
+  .card{
+    position:relative; width:min(520px, 92vw); padding:28px 28px 26px; border-radius:26px;
+    border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+    backdrop-filter: blur(16px); box-shadow: 0 18px 60px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.08);
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .title{margin:0; font-weight:800; letter-spacing:.2px; font-size:22px}
+  .sub{margin:0; color:var(--sub); font-size:14px}
+
+  /* Área de acción — TODA la card es clickeable */
+  .action{display:flex; align-items:center; gap:18px; margin-top:6px; cursor:pointer; user-select:none}
+
+  /* Switch (botón real) */
+  .switch{
+    --w: 120px; --h: 60px; --p: 8px;
+    position:relative; width:var(--w); height:var(--h); border-radius:999px;
+    border:1px solid var(--border);
+    background:linear-gradient(180deg, #111827, #0b1222);
+    box-shadow: inset 0 12px 22px rgba(0,0,0,.55);
+    transition: background .35s ease, box-shadow .35s ease, transform .08s ease;
+    display:inline-block;
+  }
+  .switch:active{transform: scale(.98)}
+  .knob{
+    position:absolute; top:var(--p); left:var(--p);
+    width:calc(var(--h) - var(--p)*2); height:calc(var(--h) - var(--p)*2); border-radius:50%;
+    background: radial-gradient(65% 65% at 30% 30%, #fff, #e9eefc 60%, #d8e0f7);
+    box-shadow:
+      0 14px 26px rgba(0,0,0,.5),
+      0 0 0 2px rgba(255,255,255,.6) inset;
+    transition: transform .35s cubic-bezier(.2,.8,.25,1), box-shadow .35s ease;
+  }
+  .glow{
+    position:absolute; inset:-10px; border-radius:999px; filter:blur(16px); opacity:0;
+    background: radial-gradient(80% 100% at 30% 50%, var(--primary), transparent 60%);
+    transition: opacity .35s ease;
+    pointer-events:none;
+  }
+  .switch[data-on="true"]{
+    background: linear-gradient(180deg, color-mix(in oklab, var(--primary) 65%, #0a0f22), #0b132a);
+    box-shadow:
+      inset 0 12px 22px rgba(12,26,60,.75),
+      0 0 0 1px rgba(79,140,255,.3);
+  }
+  .switch[data-on="true"] .knob{
+    transform: translateX(calc(var(--w) - var(--h)));
+    box-shadow:
+      0 18px 34px rgba(79,140,255,.6),
+      0 0 0 2px rgba(255,255,255,.7) inset;
+  }
+  .switch[data-on="true"] .glow{opacity:.95}
+
+  /* Etiquetas ON/OFF */
+  .labels{display:flex; gap:10px; font-size:13px}
+  .chip{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+    border:1px solid var(--border); background:rgba(255,255,255,.06); font-weight:600}
+  .dot{width:9px; height:9px; border-radius:50%}
+  .on .dot{background:var(--ok)} .off .dot{background:#64748b} .err .dot{background:var(--err)}
+  .state{display:flex; align-items:center; gap:12px}
+  .hint{color:var(--sub); font-size:13px}
+
+  /* Toast */
+  .toast{position:fixed; left:50%; bottom:24px; transform:translate(-50%, 20px);
+    opacity:0; padding:10px 14px; border-radius:12px; border:1px solid var(--border);
+    background:#0b1326; color:var(--fg); box-shadow: 0 12px 30px rgba(0,0,0,.5);
+    transition:opacity .25s ease, transform .25s ease; pointer-events:none}
+  .toast.show{opacity:1; transform:translate(-50%, 0)}
+  .toast.ok{border-color: color-mix(in oklab, var(--ok) 70%, #fff 0)}
+  .toast.err{border-color: color-mix(in oklab, var(--err) 70%, #fff 0)}
+
+  /* Loader suave que NO bloquea clicks alrededor */
+  .loader{position:absolute; inset:auto auto 18px 18px; width:28px; height:28px}
+  .ring{width:100%; height:100%; border-radius:50%; border:3px solid rgba(255,255,255,.18); border-top-color:#fff; animation:spin 1s linear infinite; opacity:0; transition:opacity .2s ease}
+  .loader.show .ring{opacity:1}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* Accesibilidad y móvil */
+  .button-like{border:none; background:none; padding:0}
+  .button-like:focus-visible{outline:2px solid var(--primary-2); outline-offset:6px; border-radius:20px}
+  @media (max-width:480px){
+    .switch{--w:108px; --h:54px}
+  }
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"></div>
+
+<article class="card" id="card">
+  <header>
+    <h1 class="title">Interruptor BOT ITEL</h1>
+    <p class="sub">Tocá para prender o apagar</p>
+  </header>
+
+  <!-- Toda esta fila es clickeable -->
+  <div class="action" id="actionRow" aria-label="Cambiar estado">
+    <!-- Switch como botón accesible -->
+    <button id="switch" class="switch button-like" role="switch" aria-checked="false" data-on="false">
+      <span class="knob" aria-hidden="true"></span>
+      <span class="glow" aria-hidden="true"></span>
+    </button>
+
+    <div class="state">
+      <span id="badge" class="chip off"><span class="dot"></span><span id="badgeTxt">Apagado</span></span>
+      <span id="hint" class="hint">Listo.</span>
+    </div>
+
+    <div id="loader" class="loader" aria-hidden="true"><div class="ring"></div></div>
+  </div>
+</article>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+  // URLs n8n
+  const URL_ON  = "https://n8n-n8n.uqdje4.easypanel.host/webhook/c7315d7d-73b0-41bb-af81-fa9995fa0f71";
+  const URL_OFF = "https://n8n-n8n.uqdje4.easypanel.host/webhook/24be2a30-f54e-4074-9982-9f4938d89620";
+
+  // UI
+  const $ = s => document.querySelector(s);
+  const el = {
+    row: $('#actionRow'),
+    sw:  $('#switch'),
+    card:$('#card'),
+    badge: $('#badge'),
+    badgeTxt: $('#badgeTxt'),
+    hint: $('#hint'),
+    loader: $('#loader'),
+    toast: $('#toast'),
+  };
+
+  // Estado
+  let current = (localStorage.getItem('switch_state') === '1'); // restaurar
+  setVisual(current, false);
+
+  // Interacciones — toda la fila es clickeable
+  el.row.addEventListener('click', (e)=>{
+    // Evitá que toques el loader
+    if (e.target.closest('#loader')) return;
+    toggle();
+  });
+  // Accesible por teclado
+  el.sw.addEventListener('keydown', (e)=>{
+    if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); toggle(); }
+  });
+
+  function toggle(){
+    const next = !current;
+    setVisual(next, true);
+    sendWebhook(next);
+  }
+
+  function setVisual(on, animate){
+    current = on;
+    el.sw.dataset.on = on ? 'true' : 'false';
+    el.sw.setAttribute('aria-checked', String(on));
+    el.badge.className = `chip ${on ? 'on' : 'off'}`;
+    el.badgeTxt.textContent = on ? 'Prendido' : 'Apagado';
+    el.hint.textContent = 'Listo.';
+    if(animate){
+      // mini highlight
+      el.card.animate([{boxShadow:'0 18px 60px rgba(0,0,0,.5)'},{boxShadow:'0 26px 80px rgba(79,140,255,.25)'},{boxShadow:'0 18px 60px rgba(0,0,0,.5)'}],{duration:450});
+    }
+  }
+
+  // Toast
+  function toast(msg, type='ok'){
+    el.toast.textContent = msg;
+    el.toast.className = `toast show ${type}`;
+    setTimeout(()=> el.toast.classList.remove('show'), 1700);
+  }
+
+  // Envío robusto: fetch con timeout + backup sendBeacon/Image + retry
+  async function sendWebhook(isOn){
+    const url = isOn ? URL_ON : URL_OFF;
+    el.loader.classList.add('show'); el.hint.textContent = 'Enviando…';
+
+    const ok = await fire(url).catch(()=>false) || await fire(url).catch(()=>false);
+    el.loader.classList.remove('show');
+
+    if(ok){
+      localStorage.setItem('switch_state', isOn ? '1' : '0');
+      toast(isOn ? 'Activado ✔' : 'Desactivado ✔', 'ok');
+      el.hint.textContent = 'Listo.';
+    }else{
+      // Revertimos visualmente si falló
+      const revert = !isOn;
+      setVisual(revert, false);
+      toast('No se pudo enviar ❌', 'err');
+      el.hint.textContent = 'Revisá conexión o CORS del webhook.';
+    }
+  }
+
+  function fire(url){
+    // 1) fetch con timeout (mejor feedback)
+    const ctrl = new AbortController();
+    const t = setTimeout(()=> ctrl.abort(), 6000);
+    return fetch(url, {method:'GET', cache:'no-store', mode:'no-cors', signal: ctrl.signal})
+      .then(()=>{ clearTimeout(t); return true; })
+      .catch(()=> {
+        clearTimeout(t);
+        // 2) backup: sendBeacon (si existe) o Image ping
+        let sent = false;
+        try{ if(navigator.sendBeacon){ sent = navigator.sendBeacon(url); } }catch(_){}
+        if(!sent){
+          return new Promise(res=>{
+            const i = new Image();
+            i.onload = ()=>res(true);
+            i.onerror = ()=>res(false);
+            i.src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+          });
+        }
+        return sent;
+      });
+  }
+</script>
+</body>
+</html>
