@@ -6,17 +6,25 @@
 <title>Switchitel</title>
 <style>
   :root{
-    --bg:#06070b; 
+    --bg:#1e1e25; /* Fondo uniforme más claro */
     --fg:#e8eefc; 
     --sub:#94a3b8;
     --primary:#4f8cff; 
     --ok:#22c55e; 
     --err:#ef4444;
-    --card:rgba(255,255,255,.12); /* Más claro que antes */
-    --border:rgba(255,255,255,.20);
+    --card:rgba(255,255,255,.18); /* Más clara para mayor contraste */
+    --border:rgba(255,255,255,.25);
   }
-  html,body{height:100%;margin:0;font-family:system-ui, sans-serif;background:var(--bg);display:grid;place-items:center;color:var(--fg);}
-  body{background:radial-gradient(1200px 900px at 10% 10%, #0a1020 0, #070a14 35%, var(--bg) 70%) fixed;}
+
+  html,body{
+    height:100%;
+    margin:0;
+    font-family:system-ui, sans-serif;
+    background:var(--bg);
+    display:grid;
+    place-items:center;
+    color:var(--fg);
+  }
 
   /* Tarjeta */
   .card{
