@@ -3,162 +3,130 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Switch ITEL</title>
+<title>Switchitel</title>
 <style>
   :root{
-    --bg:#06070b; --fg:#e8eefc; --sub:#94a3b8;
-    --primary:#4f8cff; --ok:#22c55e; --err:#ef4444;
-    --border:rgba(255,255,255,.14);
+    --bg:#06070b; 
+    --fg:#e8eefc; 
+    --sub:#94a3b8;
+    --primary:#4f8cff; 
+    --ok:#22c55e; 
+    --err:#ef4444;
+    --card:rgba(255,255,255,.12); /* Más claro que antes */
+    --border:rgba(255,255,255,.20);
   }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0; color:var(--fg);
-    background:radial-gradient(1200px 900px at 10% 10%, #0a1020 0, #070a14 35%, var(--bg) 70%) fixed;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
-    display:grid; place-items:center;
-  }
-  .card{
-    position:relative;
-    width:min(520px, 92vw);
-    padding:28px;
-    border-radius:26px;
-    border:1px solid var(--border);
-    background:rgba(255,255,255,.06);
-    backdrop-filter: blur(16px);
-    box-shadow: 0 18px 60px rgba(0,0,0,.5);
-    display:flex; flex-direction:column; gap:14px;
-  }
-  .title{margin:0; font-weight:800; font-size:22px}
-  .sub{margin:0; color:var(--sub); font-size:14px}
-  .action{display:flex; align-items:center; gap:18px; margin-top:6px; cursor:pointer; user-select:none}
+  html,body{height:100%;margin:0;font-family:system-ui, sans-serif;background:var(--bg);display:grid;place-items:center;color:var(--fg);}
+  body{background:radial-gradient(1200px 900px at 10% 10%, #0a1020 0, #070a14 35%, var(--bg) 70%) fixed;}
 
-  /* Switch más claro */
+  /* Tarjeta */
+  .card{
+    width:min(500px, 92vw);
+    padding:24px 26px;
+    border-radius:20px;
+    border:1px solid var(--border);
+    background:var(--card);
+    backdrop-filter: blur(16px);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .title{margin:0;font-weight:700;font-size:20px}
+  .sub{margin:0;color:var(--sub);font-size:14px}
+
+  /* Switch */
+  .action{display:flex;align-items:center;gap:18px;margin-top:6px;cursor:pointer;user-select:none}
   .switch{
-    --w: 120px; --h: 60px; --p: 8px;
-    position:relative;
-    width:var(--w);
-    height:var(--h);
-    border-radius:999px;
-    border:2px solid rgba(255,255,255,0.35);
+    --w: 110px; --h: 52px; --p: 6px;
+    position:relative; width:var(--w); height:var(--h); border-radius:999px;
     background:linear-gradient(180deg, #d1d5db, #9ca3af);
-    box-shadow: inset 0 6px 12px rgba(0,0,0,.2);
-    transition: background .35s ease, box-shadow .35s ease, transform .08s ease;
-    display:inline-block;
+    box-shadow: inset 0 6px 12px rgba(0,0,0,.15);
+    transition: background .35s ease;
+    border:2px solid rgba(255,255,255,0.25);
   }
-  .switch:active{transform: scale(.98)}
   .knob{
-    position:absolute;
-    top:var(--p);
-    left:var(--p);
-    width:calc(var(--h) - var(--p)*2);
-    height:calc(var(--h) - var(--p)*2);
-    border-radius:50%;
-    background: radial-gradient(circle at 30% 30%, #fff, #f3f4f6 60%, #e5e7eb);
-    box-shadow:
-      0 6px 12px rgba(0,0,0,.35),
-      0 0 0 2px rgba(255,255,255,0.8) inset;
-    transition: transform .35s cubic-bezier(.2,.8,.25,1), box-shadow .35s ease;
-  }
-  .glow{
-    position:absolute;
-    inset:-8px;
-    border-radius:999px;
-    filter:blur(14px);
-    opacity:.3;
-    background: radial-gradient(80% 100% at 50% 50%, rgba(255,255,255,0.4), transparent 70%);
-    transition: opacity .35s ease, background .35s ease;
-    pointer-events:none;
+    position:absolute; top:var(--p); left:var(--p);
+    width:calc(var(--h) - var(--p)*2); height:calc(var(--h) - var(--p)*2); border-radius:50%;
+    background: radial-gradient(circle at 30% 30%, #fff, #e5e7eb);
+    box-shadow:0 8px 14px rgba(0,0,0,.25);
+    transition: transform .35s ease;
   }
   .switch[data-on="true"]{
-    background: linear-gradient(180deg, #4f8cff, #2563eb);
-    border-color: rgba(79,140,255,0.8);
-    box-shadow:
-      inset 0 6px 12px rgba(0,0,0,.25),
-      0 0 12px rgba(79,140,255,0.6);
+    background:linear-gradient(180deg, #7aa8ff, #4f8cff);
+    border-color:rgba(79,140,255,0.8);
   }
-  .switch[data-on="true"] .knob{
-    transform: translateX(calc(var(--w) - var(--h)));
-    box-shadow:
-      0 6px 14px rgba(79,140,255,.5),
-      0 0 0 2px rgba(255,255,255,.9) inset;
-  }
-  .switch[data-on="true"] .glow{
-    opacity:.8;
-    background: radial-gradient(80% 100% at 50% 50%, rgba(79,140,255,0.6), transparent 70%);
-  }
+  .switch[data-on="true"] .knob{transform:translateX(calc(var(--w) - var(--h)));}
 
-  .chip{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background:rgba(255,255,255,.06); font-weight:600}
-  .dot{width:9px; height:9px; border-radius:50%}
-  .on .dot{background:var(--ok)}
-  .off .dot{background:#64748b}
-  .err .dot{background:var(--err)}
-  .hint{color:var(--sub); font-size:13px}
-  .toast{position:fixed; left:50%; bottom:24px; transform:translate(-50%,20px); opacity:0; padding:10px 14px; border-radius:12px; border:1px solid var(--border); background:#0b1326; color:var(--fg); box-shadow: 0 12px 30px rgba(0,0,0,.5); transition:opacity .25s ease, transform .25s ease}
-  .toast.show{opacity:1; transform:translate(-50%,0)}
-  .toast.ok{border-color:var(--ok)}
-  .toast.err{border-color:var(--err)}
+  /* Estado */
+  .chip{
+    display:inline-flex;align-items:center;gap:8px;padding:5px 10px;border-radius:999px;
+    border:1px solid var(--border);font-weight:600;font-size:14px;
+  }
+  .chip .dot{width:9px;height:9px;border-radius:50%;}
+  .chip.on{color:var(--ok);border-color:var(--ok);}
+  .chip.on .dot{background:var(--ok);}
+  .chip.off{color:#64748b;border-color:#64748b;}
+  .chip.off .dot{background:#64748b;}
+
+  .hint{color:var(--sub);font-size:13px}
 </style>
 </head>
 <body>
+
 <article class="card" id="card">
   <header>
-    <h1 class="title">Switch ITEL</h1>
-    <p class="sub">Prendé o apagá el servicio. Envía un webhook a n8n.</p>
+    <h1 class="title">Interruptor BOT ITEL</h1>
+    <p class="sub">Tocá para prender o apagar</p>
   </header>
+
   <div class="action" id="actionRow">
-    <button id="switch" class="switch" role="switch" aria-checked="false" data-on="false">
+    <div id="switch" class="switch" role="switch" aria-checked="false" data-on="false">
       <span class="knob"></span>
-      <span class="glow"></span>
-    </button>
-    <span id="badge" class="chip off"><span class="dot"></span><span id="badgeTxt">Apagado</span></span>
-    <span id="hint" class="hint">Listo.</span>
+    </div>
+
+    <div class="state">
+      <span id="badge" class="chip off"><span class="dot"></span><span id="badgeTxt">Apagado</span></span>
+      <span id="hint" class="hint">Listo.</span>
+    </div>
   </div>
 </article>
-<div id="toast" class="toast"></div>
 
 <script>
-const URL_ON  = "https://n8n-n8n.uqdje4.easypanel.host/webhook/c7315d7d-73b0-41bb-af81-fa9995fa0f71";
-const URL_OFF = "https://n8n-n8n.uqdje4.easypanel.host/webhook/24be2a30-f54e-4074-9982-9f4938d89620";
-const $ = s => document.querySelector(s);
-const el = { row: $('#actionRow'), sw: $('#switch'), badge: $('#badge'), badgeTxt: $('#badgeTxt'), hint: $('#hint'), toast: $('#toast') };
-let current = (localStorage.getItem('switch_state') === '1');
-setVisual(current,false);
+  const URL_ON  = "https://n8n-n8n.uqdje4.easypanel.host/webhook/c7315d7d-73b0-41bb-af81-fa9995fa0f71";
+  const URL_OFF = "https://n8n-n8n.uqdje4.easypanel.host/webhook/24be2a30-f54e-4074-9982-9f4938d89620";
 
-el.row.addEventListener('click',()=>toggle());
-el.sw.addEventListener('keydown',e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); toggle(); }});
+  const el = {
+    row: document.getElementById('actionRow'),
+    sw: document.getElementById('switch'),
+    badge: document.getElementById('badge'),
+    badgeTxt: document.getElementById('badgeTxt'),
+    hint: document.getElementById('hint')
+  };
 
-function toggle(){
-  const next = !current;
-  setVisual(next,true);
-  sendWebhook(next);
-}
-function setVisual(on, animate){
-  current = on;
-  el.sw.dataset.on = on ? 'true':'false';
-  el.sw.setAttribute('aria-checked', String(on));
-  el.badge.className = `chip ${on ? 'on':'off'}`;
-  el.badgeTxt.textContent = on ? 'Prendido':'Apagado';
-}
-function toast(msg,type='ok'){
-  el.toast.textContent = msg;
-  el.toast.className = `toast show ${type}`;
-  setTimeout(()=> el.toast.classList.remove('show'),1700);
-}
-async function sendWebhook(isOn){
-  const url = isOn ? URL_ON : URL_OFF;
-  const ok = await fire(url).catch(()=>false);
-  if(ok){
-    localStorage.setItem('switch_state', isOn ? '1':'0');
-    toast(isOn ? 'Activado ✔':'Desactivado ✔','ok');
-  }else{
-    setVisual(!isOn,false);
-    toast('Error ❌','err');
+  let current = (localStorage.getItem('switch_state') === '1');
+  setVisual(current);
+
+  el.row.addEventListener('click', ()=> toggle());
+
+  function toggle(){
+    const next = !current;
+    setVisual(next);
+    sendWebhook(next);
   }
-}
-function fire(url){
-  return fetch(url,{method:'GET',mode:'no-cors'}).then(()=>true);
-}
+
+  function setVisual(on){
+    current = on;
+    el.sw.dataset.on = on ? 'true' : 'false';
+    el.sw.setAttribute('aria-checked', String(on));
+    el.badge.className = `chip ${on ? 'on' : 'off'}`;
+    el.badgeTxt.textContent = on ? 'Prendido' : 'Apagado';
+    localStorage.setItem('switch_state', on ? '1' : '0');
+  }
+
+  function sendWebhook(isOn){
+    const url = isOn ? URL_ON : URL_OFF;
+    fetch(url, {method:'GET', mode:'no-cors'}).catch(()=>{});
+  }
 </script>
+
 </body>
 </html>
